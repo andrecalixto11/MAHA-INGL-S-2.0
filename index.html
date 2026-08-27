@@ -193,7 +193,7 @@ async function incCount(username, wordKey){
   await sSet('vocab:count:'+username+':'+wordKey, c, true);
   return c;
 }
-async function getSentences(username, wordKey){ return (await sGet('vocab:sentences:'+username+':'+wordKey, true)) || null; }
+async function getSentences(username, wordKey){ return (await sGet('vocab:sentences:'+username+':'+wordKey, true)) || []; }
 async function saveSentences(username, wordKey, arr){ await sSet('vocab:sentences:'+username+':'+wordKey, arr, true); }
 
 async function getMastered(username){ return (await sGet('vocab:mastered:'+username, true)) || []; }
@@ -440,7 +440,7 @@ async function openWord(id){
   if(!entry){ toast('Palavra não encontrada.'); return; }
   const count = await incCount(state.user.username, norm(entry.word));
   const mastered = (await getMastered(state.user.username)).includes(entry.id);
-  state.wordDetail = { entry, count, mastered, dict:null, sentences:null };
+  state.wordDetail = { entry, count, mastered, dict:null, sentences:undefined };
   state.view = 'wordDetail';
   render();
 
@@ -503,7 +503,7 @@ function wordDetailView(){
     blocks += `<div class="level-block">
       <div class="row"><h2 style="font-size:15px;">Pratique: escreva 5 frases</h2></div>
       <p class="muted" style="font-size:13px; margin-top:4px;">Use "${escapeHTML(entry.word)}" em 5 frases. Vamos traduzir cada uma para você.</p>
-      ${sentences === null ? '<div class="muted mt12"><span class="spinner"></span> verificando...</div>' : practiceHTML(sentences, entry)}
+      ${sentences === undefined ? '<div class="muted mt12"><span class="spinner"></span> verificando...</div>' : practiceHTML(sentences, entry)}
     </div>`;
   }
 
