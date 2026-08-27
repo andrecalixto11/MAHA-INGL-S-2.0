@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>MAHA INGLÊS 2.0</title>
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" href="./icon-192.png">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<meta name="theme-color" content="#0a0a0f">
+<style>
+  :root{
+    --bg:#0a0a0f;
+    --card:#15161d;
+    --card2:#1c1e27;
+    --border:#242631;
+    --text:#f5f6f8;
+    --muted:#9aa0ac;
+    --accent:#4c8dff;
+    --accent-dim:#4c8dff22;
+    --purple:#7c5cff;
+    --danger:#ff5c5c;
+    --success:#3ddc97;
+    --amber:#ffb020;
+    --radius:20px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{background:var(--bg); color:var(--text); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; -webkit-font-smoothing:antialiased;}
+  body{min-height:100vh; padding-bottom:90px;}
+  #app{max-width:480px; margin:0 auto; padding:28px 20px 20px;}
+  h1{font-size:28px; font-weight:800; letter-spacing:-0.5px;}
+  h2{font-size:19px; font-weight:700;}
+  .muted{color:var(--muted); font-size:14px;}
+  .row{display:flex; align-items:center; justify-content:space-between;}
+  .mt8{margin-top:8px;} .mt12{margin-top:12px;} .mt16{margin-top:16px;} .mt20{margin-top:20px;} .mt28{margin-top:28px;}
+
+  .input, .textarea, select{
+    width:100%; background:var(--card2); border:1px solid var(--border); color:var(--text);
+    border-radius:16px; padding:14px 16px; font-size:15px; outline:none;
+  }
+  .textarea{resize:vertical; min-height:70px; font-family:inherit;}
+  .input:focus, .textarea:focus, select:focus{border-color:var(--accent);}
+  label{font-size:13px; color:var(--muted); display:block; margin-bottom:6px; margin-top:14px;}
+
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:8px;
+    background:var(--accent); color:#fff; border:none; border-radius:16px;
+    padding:14px 18px; font-size:15px; font-weight:700; cursor:pointer; width:100%;
+  }
+  .btn:active{opacity:0.85;}
+  .btn.secondary{background:var(--card2); color:var(--text); border:1px solid var(--border); font-weight:600;}
+  .btn.danger{background:#2a1518; color:var(--danger); border:1px solid #4a2228;}
+  .btn.ghost{background:transparent; color:var(--accent); font-weight:600; width:auto; padding:8px 4px;}
+  .btn.sm{padding:10px 14px; font-size:13px; width:auto;}
+
+  .searchbar{
+    background:var(--card2); border:1px solid var(--border); border-radius:999px;
+    padding:14px 18px; display:flex; align-items:center; gap:10px; color:var(--muted); cursor:pointer;
+  }
+
+  .card{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:16px;}
+  .list-card{background:var(--card); border:1px solid var(--border); border-radius:18px; padding:16px; display:flex; gap:14px; align-items:center; cursor:pointer;}
+  .list-card + .list-card{margin-top:12px;}
+  .icon-square{
+    width:48px; height:48px; min-width:48px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:22px;
+  }
+  .grid4{display:grid; grid-template-columns:repeat(4,1fr); gap:10px;}
+  .quick-card{
+    background:var(--card); border:1px solid var(--border); border-radius:18px; padding:14px 6px;
+    display:flex; flex-direction:column; align-items:center; gap:8px; text-align:center; cursor:pointer;
+  }
+  .quick-card .ic{width:44px; height:44px; border-radius:13px; display:flex; align-items:center; justify-content:center; font-size:20px;}
+  .quick-card span{font-size:12px; font-weight:600; color:var(--text);}
+
+  .badge{display:inline-block; font-size:11px; font-weight:700; padding:4px 9px; border-radius:999px;}
+  .badge.blue{background:var(--accent-dim); color:var(--accent);}
+  .badge.green{background:#3ddc9722; color:var(--success);}
+  .badge.amber{background:#ffb02022; color:var(--amber);}
+  .badge.purple{background:#7c5cff22; color:var(--purple);}
+  .badge.gray{background:var(--card2); color:var(--muted);}
+
+  .navbar{
+    position:fixed; bottom:0; left:0; right:0; background:rgba(10,10,15,0.94); backdrop-filter:blur(10px);
+    border-top:1px solid var(--border); display:flex; justify-content:space-around; padding:12px 0 18px;
+    max-width:480px; margin:0 auto;
+  }
+  .nav-item{display:flex; flex-direction:column; align-items:center; gap:4px; color:var(--muted); cursor:pointer; font-size:10px; font-weight:600;}
+  .nav-item.active{color:var(--accent);}
+  .nav-item svg{width:23px; height:23px;}
+
+  .toast{
+    position:fixed; top:16px; left:50%; transform:translateX(-50%); background:var(--card2); border:1px solid var(--border);
+    color:var(--text); padding:12px 18px; border-radius:14px; font-size:13px; z-index:999; box-shadow:0 8px 24px rgba(0,0,0,0.4);
+  }
+  .backrow{display:flex; align-items:center; gap:10px; cursor:pointer; color:var(--muted); font-size:14px; font-weight:600; margin-bottom:18px;}
+
+  .level-block{border-top:1px solid var(--border); padding-top:16px; margin-top:16px;}
+  .sentence-box{background:var(--card2); border:1px solid var(--border); border-radius:14px; padding:12px 14px; margin-top:10px;}
+  .lock-row{display:flex; align-items:center; gap:10px; padding:12px 0; color:var(--muted); font-size:13px;}
+  .dot{width:6px; height:6px; border-radius:50%; background:var(--muted);}
+  .spinner{width:14px; height:14px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin .7s linear infinite; display:inline-block;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .empty{text-align:center; padding:50px 10px; color:var(--muted);}
+  .divider{height:1px; background:var(--border); margin:18px 0;}
+  a{color:var(--accent); text-decoration:none;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ===================== HELPERS ===================== */
+const $ = (id) => document.getElementById(id);
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+const norm = (w) => (w||'').trim().toLowerCase();
+
+let state = { view:'login', user:null, wordDetail:null, message:null, prefillSearch:'' };
+let toastTimer = null;
+
+function toast(msg){
+  state.message = msg;
+  render();
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{ state.message=null; renderToastOnly(); }, 2400);
+}
+function renderToastOnly(){
+  const el = document.getElementById('toast-el');
+  if(el) el.remove();
+}
+
+/* ===================== STORAGE LAYER (cloud, shared) ===================== */
+async function withRetry(fn, tries){
+  tries = tries || 3;
+  let lastErr;
+  for(let i=0;i<tries;i++){
+    try{ return await fn(); }
+    catch(e){ lastErr = e; await new Promise(r=>setTimeout(r, 300*(i+1))); }
+  }
+  throw lastErr;
+}
+const memStore = {};
+let storageWarned = false;
+function warnStorageOnce(){
+  if(storageWarned) return;
+  storageWarned = true;
+  toast('Sem conexão com a nuvem no momento — usando modo local nesta sessão.');
+}
+async function sGet(key, shared){
+  try{
+    const res = await withRetry(()=>fetch('/.netlify/functions/data?key='+encodeURIComponent(key)));
+    if(!res.ok) throw new Error('bad response '+res.status);
+    const data = await res.json();
+    return data.value !== undefined ? data.value : null;
+  }catch(e){
+    if(Object.prototype.hasOwnProperty.call(memStore, key)) return memStore[key];
+    return null;
+  }
+}
+async function sSet(key, val, shared){
+  try{
+    const res = await withRetry(()=>fetch('/.netlify/functions/data?key='+encodeURIComponent(key), {
+      method:'POST',
+      headers:{'content-type':'application/json'},
+      body: JSON.stringify({ value: val })
+    }));
+    if(!res.ok) throw new Error('bad response '+res.status);
+    memStore[key] = val;
+    return true;
+  }catch(e){
+    console.error(e);
+    memStore[key] = val;
+    warnStorageOnce();
+    return false;
+  }
+}
+
+async function getUsers(){
+  let u = await sGet('vocab:users', true);
+  if(!u){
+    u = { [norm('André')]: { password:'160402', role:'admin' } };
+    await sSet('vocab:users', u, true);
+  }
+  return u;
+}
+async function saveUsers(u){ await sSet('vocab:users', u, true); }
+
+async function getWords(username){ return (await sGet('vocab:words:'+username, true)) || []; }
+async function saveWords(username, arr){ await sSet('vocab:words:'+username, arr, true); }
+
+async function getCount(username, wordKey){ return (await sGet('vocab:count:'+username+':'+wordKey, true)) || 0; }
+async function incCount(username, wordKey){
+  const c = (await getCount(username, wordKey)) + 1;
+  await sSet('vocab:count:'+username+':'+wordKey, c, true);
+  return c;
+}
+async function getSentences(username, wordKey){ return (await sGet('vocab:sentences:'+username+':'+wordKey, true)) || null; }
+async function saveSentences(username, wordKey, arr){ await sSet('vocab:sentences:'+username+':'+wordKey, arr, true); }
+
+async function getMastered(username){ return (await sGet('vocab:mastered:'+username, true)) || []; }
+async function saveMastered(username, arr){ await sSet('vocab:mastered:'+username, arr, true); }
+
+async function getDictCache(wordKey){ return await sGet('vocab:dict:'+wordKey, true); }
+async function saveDictCache(wordKey, data){ await sSet('vocab:dict:'+wordKey, data, true); }
+
+/* ===================== EXTERNAL APIs (translation / dictionary) ===================== */
+async function translateToPt(text){
+  try{
+    const res = await fetch('/.netlify/functions/translate?text='+encodeURIComponent(text));
+    const data = await res.json();
+    return data && data.translatedText ? data.translatedText : null;
+  }catch(e){ return null; }
+}
+
+async function fetchDictionaryData(word){
+  const wordKey = norm(word);
+  const cached = await getDictCache(wordKey);
+  if(cached) return cached;
+
+  let translation = await translateToPt(word);
+  let examples = [];
+
+  try{
+    const res = await fetch('/.netlify/functions/dictionary?word='+encodeURIComponent(wordKey));
+    const data = await res.json();
+    examples = data.examples || [];
+  }catch(e){ /* offline / not found, fall back below */ }
+
+  if(examples.length < 2){
+    const fallback = [
+      'I try to use the word "'+word+'" in a sentence every day.',
+      'Can you explain what "'+word+'" means in this context?'
+    ];
+    while(examples.length < 2) examples.push(fallback[examples.length]);
+  }
+
+  const examplesWithPt = [];
+  for(const ex of examples){
+    const pt = await translateToPt(ex);
+    examplesWithPt.push({ en: ex, pt: pt || '(tradução indisponível no momento)' });
+  }
+
+  const data = { translation: translation || '(tradução indisponível no momento)', examples: examplesWithPt };
+  await saveDictCache(wordKey, data);
+  return data;
+}
+
+/* ===================== ICONS ===================== */
+const ICONS = {
+  home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>',
+  search:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>',
+  book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4.5A2.5 2.5 0 016.5 2H20v18H6.5A2.5 2.5 0 004 17.5v-13z"/><path d="M4 17.5A2.5 2.5 0 016.5 15H20"/></svg>',
+  user:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>'
+};
+
+/* ===================== RENDER SHELL ===================== */
+async function render(){
+  const app = $('app');
+  const html = await viewHTML();
+  app.innerHTML = html + navHTML();
+  if(state.message){
+    const t = document.createElement('div');
+    t.id='toast-el'; t.className='toast'; t.textContent=state.message;
+    document.body.appendChild(t);
+  }
+  afterRender();
+}
+
+function navHTML(){
+  if(state.view==='login') return '';
+  const nv = (v)=>state.view===v?'active':'';
+  return `
+  <div class="navbar">
+    <div class="nav-item ${nv('home')}" onclick="goto('home')">${ICONS.home}<span>Início</span></div>
+    <div class="nav-item ${nv('search')}" onclick="goto('search')">${ICONS.search}<span>Buscar</span></div>
+    <div class="nav-item ${nv('mywords')}" onclick="goto('mywords')">${ICONS.book}<span>Palavras</span></div>
+    <div class="nav-item ${nv('profile')}" onclick="goto('profile')">${ICONS.user}<span>Perfil</span></div>
+  </div>`;
+}
+
+function goto(view, extra){
+  state.view = view;
+  if(extra) Object.assign(state, extra);
+  render();
+}
+
+/* ===================== VIEW DISPATCH ===================== */
+async function viewHTML(){
+  switch(state.view){
+    case 'login': return loginView();
+    case 'home': return await homeView();
+    case 'add': return addView();
+    case 'search': return await searchView();
+    case 'wordDetail': return wordDetailView();
+    case 'mywords': return await myWordsView();
+    case 'admin': return await adminView();
+    case 'profile': return profileView();
+    default: return await homeView();
+  }
+}
+
+/* ===================== LOGIN ===================== */
+function loginView(){
+  return `
+  <div style="padding-top:60px;">
+    <div style="text-align:center; font-size:40px;">🎓</div>
+    <div style="text-align:center; margin-top:10px;"><span class="badge blue">MAHA INGLÊS 2.0</span></div>
+    <h1 style="text-align:center; margin-top:14px;">Bem-vindo 👋</h1>
+    <p class="muted" style="text-align:center; margin-top:6px;">Entre para continuar seus estudos de inglês.</p>
+
+    <div class="card mt28">
+      <label>Usuário</label>
+      <input class="input" id="li-user" placeholder="seu usuário" autocomplete="off">
+      <label>Senha</label>
+      <input class="input" id="li-pass" type="password" placeholder="sua senha">
+      <button class="btn mt20" onclick="doLogin()">Entrar</button>
+    </div>
+  </div>`;
+}
+
+async function doLogin(){
+  const username = norm($('li-user').value);
+  const pass = $('li-pass').value;
+  if(!username || !pass){ toast('Preencha usuário e senha.'); return; }
+  const users = await getUsers();
+  const u = users[username];
+  if(!u || u.password !== pass){ toast('Usuário ou senha incorretos.'); return; }
+  state.user = { username, role: u.role };
+  goto('home');
+}
+
+/* ===================== HOME ===================== */
+async function homeView(){
+  if(!state.user) { setTimeout(()=>goto('login'),0); return ''; }
+  const words = await getWords(state.user.username);
+  const recent = [...words].sort((a,b)=>b.createdAt-a.createdAt).slice(0,4);
+  const isAdmin = state.user.role==='admin';
+
+  const quickCards = `
+    <div class="grid4 mt12">
+      <div class="quick-card" onclick="goto('add')"><div class="ic" style="background:#4c8dff22; color:#4c8dff;">✏️</div><span>Nova Palavra</span></div>
+      <div class="quick-card" onclick="goto('mywords')"><div class="ic" style="background:#7c5cff22; color:#7c5cff;">📚</div><span>Minhas Palavras</span></div>
+      <div class="quick-card" onclick="goto('search')"><div class="ic" style="background:#3ddc9722; color:#3ddc97;">🔍</div><span>Pesquisar</span></div>
+      ${isAdmin
+        ? `<div class="quick-card" onclick="goto('admin')"><div class="ic" style="background:#ffb02022; color:#ffb020;">🧑‍💼</div><span>Usuários</span></div>`
+        : `<div class="quick-card" onclick="goto('profile')"><div class="ic" style="background:#ffb02022; color:#ffb020;">📊</div><span>Meu Perfil</span></div>`}
+    </div>`;
+
+  const listHTML = recent.length ? recent.map(w=>wordCard(w)).join('') :
+    `<div class="empty">Você ainda não salvou nenhuma palavra.<br><br><a onclick="goto('add')">+ Adicionar a primeira palavra</a></div>`;
+
+  return `
+  <h1>Bem-vindo, ${state.user.username} 👋</h1>
+  <p class="muted mt8">Escreva, guarde e revise seu vocabulário.</p>
+
+  <div class="searchbar mt20" onclick="goto('search')">${ICONS.search}<span>Buscar uma palavra que você já salvou</span></div>
+
+  <div class="row mt28"><h2>Ações rápidas</h2></div>
+  ${quickCards}
+
+  <div class="row mt28"><h2>Últimas palavras</h2><a onclick="goto('mywords')" style="font-size:13px; font-weight:600;">Ver todas</a></div>
+  <div class="mt12">${listHTML}</div>
+  `;
+}
+
+function wordCard(w){
+  return `
+  <div class="list-card" onclick="openWord('${w.id}')">
+    <div class="icon-square" style="background:#4c8dff22; color:#4c8dff;">Aa</div>
+    <div style="flex:1; min-width:0;">
+      <div style="font-weight:700; font-size:15px;">${escapeHTML(w.word)}</div>
+      <div class="muted" style="font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${escapeHTML(w.translation)}</div>
+    </div>
+  </div>`;
+}
+
+function escapeHTML(s){ return (s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* ===================== ADD WORD ===================== */
+function addView(){
+  return `
+  <div class="backrow" onclick="goto('home')">← Voltar</div>
+  <h1>Nova palavra</h1>
+  <p class="muted mt8">Escreva a palavra em inglês e o que ela significa, do seu jeito.</p>
+  <div class="card mt20">
+    <label>Palavra em inglês</label>
+    <input class="input" id="aw-word" placeholder="ex: overwhelmed" value="${escapeHTML(state.prefillSearch||'')}">
+    <label>O que significa (sua tradução)</label>
+    <textarea class="textarea" id="aw-trans" placeholder="ex: sobrecarregado, tomado por algo"></textarea>
+    <button class="btn mt20" onclick="saveWord()">Salvar</button>
+  </div>`;
+}
+
+async function saveWord(){
+  const word = $('aw-word').value.trim();
+  const translation = $('aw-trans').value.trim();
+  if(!word || !translation){ toast('Preencha a palavra e a tradução.'); return; }
+  const words = await getWords(state.user.username);
+  const key = norm(word);
+  const existing = words.find(w=>norm(w.word)===key);
+  if(existing){
+    existing.translation = translation;
+    existing.word = word;
+  } else {
+    words.push({ id:uid(), word, translation, createdAt:Date.now() });
+  }
+  await saveWords(state.user.username, words);
+  state.prefillSearch = '';
+  toast('Palavra salva!');
+  goto('mywords');
+}
+
+/* ===================== SEARCH ===================== */
+async function searchView(){
+  const words = state.user ? await getWords(state.user.username) : [];
+  window.__allWords = words;
+  return `
+  <h1>Buscar</h1>
+  <input class="input mt16" id="sv-input" placeholder="Digite a palavra..." oninput="filterSearch()" autofocus>
+  <div id="sv-results" class="mt16"></div>
+  `;
+}
+
+function filterSearch(){
+  const q = norm($('sv-input').value);
+  const box = $('sv-results');
+  if(!q){ box.innerHTML=''; return; }
+  const matches = (window.__allWords||[]).filter(w=>norm(w.word).includes(q));
+  if(matches.length===0){
+    box.innerHTML = `<div class="empty">Nenhuma palavra encontrada para "${escapeHTML(q)}".<br><br>
+      <button class="btn secondary" onclick="goto('add', {prefillSearch:'${escapeHTML(q)}'})">+ Adicionar "${escapeHTML(q)}"</button></div>`;
+    return;
+  }
+  box.innerHTML = matches.map(w=>wordCard(w)).join('');
+}
+
+/* ===================== WORD DETAIL (progressive reveal) ===================== */
+async function openWord(id){
+  const words = await getWords(state.user.username);
+  const entry = words.find(w=>w.id===id);
+  if(!entry){ toast('Palavra não encontrada.'); return; }
+  const count = await incCount(state.user.username, norm(entry.word));
+  const mastered = (await getMastered(state.user.username)).includes(entry.id);
+  state.wordDetail = { entry, count, mastered, dict:null, sentences:null };
+  state.view = 'wordDetail';
+  render();
+
+  if(count >= 3){
+    const dict = await fetchDictionaryData(entry.word);
+    state.wordDetail.dict = dict;
+    if(state.view==='wordDetail' && state.wordDetail.entry.id===entry.id) render();
+  }
+  if(count >= 5){
+    const saved = await getSentences(state.user.username, norm(entry.word));
+    state.wordDetail.sentences = saved;
+    if(state.view==='wordDetail' && state.wordDetail.entry.id===entry.id) render();
+  }
+}
+
+function wordDetailView(){
+  const d = state.wordDetail;
+  if(!d) { return '<div class="empty">Carregando...</div>'; }
+  const { entry, count, mastered, dict, sentences } = d;
+
+  let blocks = '';
+
+  // Level 1-2: user's own translation only
+  blocks += `
+  <div class="card mt20">
+    <div class="muted" style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">Sua tradução</div>
+    <div style="font-size:17px; margin-top:6px;">${escapeHTML(entry.translation)}</div>
+  </div>`;
+
+  if(count < 3){
+    blocks += `<div class="lock-row"><div class="dot"></div>Pesquise essa palavra ${3-count} vez(es) a mais para ver a tradução do dicionário.</div>`;
+  }
+
+  // Level 3: dictionary translation
+  if(count >= 3){
+    blocks += `<div class="level-block">
+      <div class="muted" style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">Tradução do dicionário</div>
+      <div style="font-size:16px; margin-top:6px;">${dict ? escapeHTML(dict.translation) : '<span class="spinner"></span> carregando...'}</div>
+    </div>`;
+    if(count===3) blocks += `<div class="lock-row"><div class="dot"></div>Pesquise mais 1 vez para ver frases de exemplo.</div>`;
+  }
+
+  // Level 4: example sentences
+  if(count >= 4 && dict){
+    blocks += `<div class="level-block">
+      <div class="muted" style="font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">Frases de exemplo</div>
+      ${dict.examples.map(ex=>`
+        <div class="sentence-box">
+          <div>${escapeHTML(ex.en)}</div>
+          <div class="muted mt8" style="font-size:13px;">${escapeHTML(ex.pt)}</div>
+        </div>`).join('')}
+    </div>`;
+    if(count===4) blocks += `<div class="lock-row"><div class="dot"></div>Pesquise mais 1 vez para desbloquear o exercício de escrita.</div>`;
+  } else if(count>=4 && !dict){
+    blocks += `<div class="level-block muted"><span class="spinner"></span> carregando frases...</div>`;
+  }
+
+  // Level 5: user writes 5 sentences
+  if(count >= 5){
+    blocks += `<div class="level-block">
+      <div class="row"><h2 style="font-size:15px;">Pratique: escreva 5 frases</h2></div>
+      <p class="muted" style="font-size:13px; margin-top:4px;">Use "${escapeHTML(entry.word)}" em 5 frases. Vamos traduzir cada uma para você.</p>
+      ${sentences === null ? '<div class="muted mt12"><span class="spinner"></span> verificando...</div>' : practiceHTML(sentences, entry)}
+    </div>`;
+  }
+
+  return `
+  <div class="backrow" onclick="goto('home')">← Voltar</div>
+  <div class="row" style="align-items:flex-start;">
+    <div>
+      <h1>${escapeHTML(entry.word)}</h1>
+      <div class="mt8">
+        <span class="badge blue">Pesquisada ${count}x</span>
+        ${mastered?'<span class="badge green" style="margin-left:6px;">Dominada</span>':''}
+      </div>
+    </div>
+    <button class="btn sm ${mastered?'secondary':''}" onclick="toggleMastered('${entry.id}')">${mastered?'Desmarcar':'Marcar como dominada'}</button>
+  </div>
+  ${blocks}
+  `;
+}
+
+function practiceHTML(sentences, entry){
+  if(sentences && sentences.length===5){
+    return sentences.map((s,i)=>`
+      <div class="sentence-box">
+        <div class="muted" style="font-size:11px; font-weight:700;">FRASE ${i+1}</div>
+        <div style="margin-top:4px;">${escapeHTML(s.text)}</div>
+        <div class="muted mt8" style="font-size:13px;">${escapeHTML(s.translation)}</div>
+      </div>`).join('') + `<button class="btn secondary mt12 sm" onclick="resetPractice('${entry.id}')">Reescrever frases</button>`;
+  }
+  let html = '<div id="practice-form">';
+  for(let i=0;i<5;i++){
+    html += `<label>Frase ${i+1}</label><input class="input" id="pf-${i}" placeholder="escreva uma frase com &quot;${escapeHTML(entry.word)}&quot;">`;
+  }
+  html += `<button class="btn mt20" onclick="submitPractice('${entry.id}')" id="pf-submit">Traduzir e salvar</button></div>`;
+  return html;
+}
+
+async function submitPractice(entryId){
+  const btn = $('pf-submit');
+  const texts = [];
+  for(let i=0;i<5;i++){
+    const v = $('pf-'+i).value.trim();
+    if(!v){ toast('Preencha as 5 frases.'); return; }
+    texts.push(v);
+  }
+  btn.disabled = true; btn.textContent = 'Traduzindo...';
+  const results = [];
+  for(const t of texts){
+    const pt = await translateToPt(t);
+    results.push({ text:t, translation: pt || '(tradução indisponível)' });
+  }
+  const entry = state.wordDetail.entry;
+  await saveSentences(state.user.username, norm(entry.word), results);
+  state.wordDetail.sentences = results;
+  toast('Frases salvas!');
+  render();
+}
+
+async function resetPractice(entryId){
+  const entry = state.wordDetail.entry;
+  await saveSentences(state.user.username, norm(entry.word), []);
+  state.wordDetail.sentences = [];
+  render();
+}
+
+async function toggleMastered(id){
+  const list = await getMastered(state.user.username);
+  const idx = list.indexOf(id);
+  if(idx>=0) list.splice(idx,1); else list.push(id);
+  await saveMastered(state.user.username, list);
+  state.wordDetail.mastered = idx<0;
+  render();
+}
+
+/* ===================== MY WORDS ===================== */
+async function myWordsView(){
+  const words = (await getWords(state.user.username)).sort((a,b)=>b.createdAt-a.createdAt);
+  const mastered = await getMastered(state.user.username);
+  return `
+  <h1>Minhas Palavras</h1>
+  <p class="muted mt8">${words.length} palavra(s) salva(s) · ${mastered.length} dominada(s)</p>
+  <div class="mt16">
+    ${words.length ? words.map(w=>wordCard(w)).join('') : `<div class="empty">Nenhuma palavra ainda. <br><br><a onclick="goto('add')">+ Adicionar palavra</a></div>`}
+  </div>`;
+}
+
+/* ===================== ADMIN ===================== */
+async function adminView(){
+  if(state.user.role !== 'admin'){ setTimeout(()=>goto('home'),0); return ''; }
+  const users = await getUsers();
+  const entries = Object.entries(users);
+  const rows = entries.map(([name,u])=>`
+    <div class="list-card" style="cursor:default;">
+      <div class="icon-square" style="background:${u.role==='admin'?'#ffb02022':'#4c8dff22'}; color:${u.role==='admin'?'#ffb020':'#4c8dff'};">${u.role==='admin'?'🧑‍💼':'🎓'}</div>
+      <div style="flex:1;">
+        <div style="font-weight:700;">${escapeHTML(name)}</div>
+        <span class="badge ${u.role==='admin'?'amber':'blue'}">${u.role==='admin'?'Administrador':'Aluno'}</span>
+      </div>
+      ${name!==state.user.username ? `<button class="btn danger sm" onclick="deleteUser('${name}')">Excluir</button>` : `<span class="badge gray">Você</span>`}
+    </div>`).join('');
+
+  const hasAluno = entries.some(([,u])=>u.role==='user');
+
+  return `
+  <h1>Painel de Administrador</h1>
+  <p class="muted mt8">Crie e gerencie contas de acesso ao app.</p>
+
+  <div class="mt20">${rows}</div>
+
+  <div class="divider"></div>
+  <h2>Criar novo usuário</h2>
+  <div class="card mt16">
+    <label>Usuário</label>
+    <input class="input" id="au-user" placeholder="nome de usuário" autocomplete="off">
+    <label>Senha</label>
+    <input class="input" id="au-pass" type="password" placeholder="senha">
+    <label>Tipo de conta</label>
+    <select id="au-role">
+      <option value="user" ${hasAluno?'disabled':''}>Aluno (já existe um)${hasAluno?' — indisponível':''}</option>
+      <option value="admin">Administrador</option>
+    </select>
+    <button class="btn mt20" onclick="createUser()">Criar usuário</button>
+    <p class="muted mt8" style="font-size:12px;">Só é permitido 1 conta de aluno por vez. Contas de administrador não têm limite.</p>
+  </div>
+  `;
+}
+
+async function createUser(){
+  const username = norm($('au-user').value);
+  const password = $('au-pass').value;
+  const role = $('au-role').value;
+  if(!username || !password){ toast('Preencha usuário e senha.'); return; }
+  const users = await getUsers();
+  if(users[username]){ toast('Esse nome de usuário já existe.'); return; }
+  if(role==='user' && Object.values(users).some(u=>u.role==='user')){
+    toast('Já existe uma conta de aluno. Exclua-a antes de criar outra.'); return;
+  }
+  users[username] = { password, role };
+  await saveUsers(users);
+  toast('Usuário criado!');
+  render();
+}
+
+async function deleteUser(name){
+  const users = await getUsers();
+  const admins = Object.values(users).filter(u=>u.role==='admin');
+  if(users[name].role==='admin' && admins.length<=1){ toast('Não é possível excluir o único administrador.'); return; }
+  if(!confirm('Excluir o usuário "'+name+'"? Isso não apaga as palavras salvas dele.')) return;
+  delete users[name];
+  await saveUsers(users);
+  toast('Usuário excluído.');
+  render();
+}
+
+/* ===================== PROFILE ===================== */
+function profileView(){
+  return `
+  <h1>Perfil</h1>
+  <div class="card mt20">
+    <div class="row">
+      <div>
+        <div style="font-weight:700; font-size:17px;">${escapeHTML(state.user.username)}</div>
+        <span class="badge ${state.user.role==='admin'?'amber':'blue'}">${state.user.role==='admin'?'Administrador':'Aluno'}</span>
+      </div>
+      <div class="icon-square" style="background:#4c8dff22; color:#4c8dff;">${ICONS.user}</div>
+    </div>
+  </div>
+
+  <h2 class="mt28">Alterar senha</h2>
+  <div class="card mt16">
+    <label>Nova senha</label>
+    <input class="input" id="pf-newpass" type="password" placeholder="nova senha">
+    <button class="btn secondary mt20" onclick="changePassword()">Salvar nova senha</button>
+  </div>
+
+  ${state.user.role==='admin' ? `<button class="btn secondary mt20" onclick="goto('admin')">Painel de Administrador</button>` : ''}
+  <button class="btn danger mt20" onclick="logout()">Sair</button>
+  `;
+}
+
+async function changePassword(){
+  const np = $('pf-newpass').value;
+  if(!np){ toast('Digite uma nova senha.'); return; }
+  const users = await getUsers();
+  users[state.user.username].password = np;
+  await saveUsers(users);
+  toast('Senha atualizada!');
+  $('pf-newpass').value='';
+}
+
+function logout(){
+  state.user = null;
+  state.wordDetail = null;
+  goto('login');
+}
+
+function afterRender(){}
+
+/* ===================== INIT ===================== */
+getUsers().then(()=>render());
+</script>
+</body>
+</html>

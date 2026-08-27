@@ -1,0 +1,9 @@
+{
+  "name": "maha-ingles-2",
+  "version": "2.0.0",
+  "private": true,
+  "description": "MAHA INGLES 2.0 - app de vocabulario de ingles com revisao progressiva",
+  "dependencies": {
+    "@netlify/blobs": "^7.3.0"
+  }
+}
